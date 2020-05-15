@@ -30,7 +30,7 @@ function showText() {
 function rollPigs() {
   pig1.roll();
   pig2.roll();
-  showPigs = true;
+  firstRoll = true;
 }
 
 // add score/determine outcome after pigs stop moving, only runs once each roll

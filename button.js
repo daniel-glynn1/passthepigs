@@ -1,10 +1,10 @@
 
 class Button {
-  constructor(x, y, tx) {
+  constructor(x, y, w, h, tx) {
     this.x = x;
     this.y = y;
-    this.w = 100;
-    this.h = 43;
+    this.w = w;
+    this.h = h;
 
     this.b = 255;
 

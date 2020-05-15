@@ -5,6 +5,10 @@ class Pig {
     this.img = pigs[0];
     this.land = 0;
 
+    this.vy = 0;
+    this.ay = 0;
+    this.vx = 0;
+
     this.stopped = false;
   }
 
@@ -44,13 +48,13 @@ class Pig {
 
     if (this.y > 150) {
       this.vy *= -0.65;
-      this.vx += 0.7;
-      if (this.vy < 4) {
+      if (this.vy < 5) {
         this.vy = 0;
         this.vx = 0;
         moving = false;
         this.stopped = true;
       } else {
+        this.vx += 0.7;
         this.roll();
       }
     }
