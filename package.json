@@ -1,0 +1,29 @@
+{
+  "name": "passthepigs",
+  "version": "1.3.0",
+  "description": "Multiplayer pass the pigs game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniel-glynn1/passthepigs.git"
+  },
+  "keywords": [
+    "sockets",
+    "p5.js",
+    "node"
+  ],
+  "author": "Daniel Glynn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daniel-glynn1/passthepigs/issues"
+  },
+  "homepage": "https://github.com/daniel-glynn1/passthepigs#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
+}
