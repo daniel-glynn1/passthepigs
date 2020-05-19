@@ -5,7 +5,6 @@ let socket;
 // constants
 let width = 800;
 let height = 600;
-let numPlayers = 4;
 
 // objects
 let button1, button2, button3, button4;
@@ -13,7 +12,7 @@ let pigs = [];
 let players = [];
 
 // global variables
-let currentPlayer = 0, playerNum = 1;
+let currentPlayer = 0, playerNum = 0;
 let output = "";
 let firstRoll = false, moving = false;
 let mode;
@@ -39,10 +38,6 @@ function setup() {
   pig1 = new Pig(600, 100, 1);
   pig2 = new Pig(700, 100, 2);
 
-  for (let i = 0; i < numPlayers; i++) {
-    players[i] = new Player();
-  }
-
   // set font
   textFont('Georgia');
 
@@ -54,8 +49,10 @@ function setup() {
   socket.on('mouse', newMouseClicked);
   socket.on('rand', newRandNums);
   socket.on('player', newPlayerNum);
+  socket.on('join', newPlayerAdd);
 
   socket.emit('player', 1);
+
 
 }
 
@@ -82,41 +79,78 @@ function draw() {
     button3.show();
 
   } else if (mode == 1) {
-    // UI elements
-    image(table, 0, 0, width, height);
-    button1.show();
-    button2.show();
-    fill(0);
-    showText();
+    if (playerNum == currentPlayer + 1) {
+      // UI elements
+      image(table, 0, 0, width, height);
+      button1.show();
+      button2.show();
+      fill(0);
+      showText();
 
-    // if first pigs have been rolled
-    if (firstRoll) {
-      pig1.show();
-      pig2.show();
+      // if first pigs have been rolled
+      if (firstRoll) {
+        pig1.show();
+        pig2.show();
 
-      // if pigs are moving or not
-      if (moving) {
-        pig1.move();
-        pig2.move();
-      } else {
-        changeScore();
+        // if pigs are moving or not
+        if (moving) {
+          pig1.move();
+          pig2.move();
+        } else {
+          changeScore();
 
-        // print pig landings
-        textAlign(CENTER);
-        textSize(30);
-        text(output, width / 2, 450);
-        textAlign(LEFT);
+          // print pig landings
+          textAlign(CENTER);
+          textSize(30);
+          text(output, width / 2, 450);
+          textAlign(LEFT);
+        }
+
+        // check if anyone has won
+        for (let i = 0; i < players.length; i++) {
+          if (players[i].totalScore >= 100) {
+            mode = 2;
+            winner = i;
+          }
+        }
       }
 
-      // check if anyone has won
-      for (let i = 0; i < numPlayers; i++) {
-        if (players[i].totalScore >= 100) {
-          mode = 2;
-          winner = i;
+    } else {
+      image(table, 0, 0, width, height);
+      fill(0);
+      showText();
 
+      // if first pigs have been rolled
+      if (firstRoll) {
+        pig1.show();
+        pig2.show();
+
+        // if pigs are moving or not
+        if (moving) {
+          pig1.move();
+          pig2.move();
+        } else {
+          changeScore();
+
+          // print pig landings
+          textAlign(CENTER);
+          textSize(30);
+          text(output, width / 2, 450);
+          textAlign(LEFT);
+        }
+
+        // check if anyone has won
+        for (let i = 0; i < players.length; i++) {
+          if (players[i].totalScore >= 100) {
+            mode = 2;
+            winner = i;
+          }
         }
       }
     }
+
+
+
   } else if (mode == 2) {
     // end game screen
 
@@ -139,15 +173,21 @@ function draw() {
 
 // Controls roll/pass, buttons don't work if pigs are moving
 function mouseClicked() {
-  fill(255);
-  ellipse(mouseX, mouseY, 40, 40);
   if (mode == 0) {
     // Start game button
     if (button3.underMouse(mouseX, mouseY)) {
       mode = 1;
+      socket.emit('join', 1);
+      if (playerNum != 1) {
+        for (i = 0; i < playerNum - 1; i++) {
+          let p = new Player();
+          players.push(p);
+        }
+      }
+
 
     }
-  } else if (mode == 1) {
+  } else if (mode == 1 && playerNum == currentPlayer + 1) {
     // Roll button
     if (button1.underMouse(mouseX, mouseY)) {
 
@@ -175,7 +215,7 @@ function mouseClicked() {
     }
 
     // server stuff
-    console.log('Sending: ' + mouseX + ', ' + mouseY);
+    // console.log('Sending: ' + mouseX + ', ' + mouseY);
     let data = {
       x: mouseX,
       y: mouseY
@@ -187,7 +227,7 @@ function mouseClicked() {
     // New Game button
     if (button4.underMouse(mouseX, mouseY)) {
       mode = 1;
-      for (let i = 0; i < numPlayers; i++) {
+      for (let i = 0; i < players.length; i++) {
         players[i].reset();
         firstRoll = false;
         currentPlayer = 0;
@@ -246,35 +286,38 @@ function newRandNums(nums) {
 
 
 function newMouseClicked(data) {
-  fill(100);
-  ellipse(data.x, data.y, 40, 40);
-    // Roll button
-    if (button1.underMouse(data.x, data.y)) {
 
-      if (!moving) {
-        // randomize pigs and move them back
-        rollPigs();
-        pig1.reset();
-        pig2.reset();
-        pig2.x += 100;
-        moving = true;
-      }
+
+  // Roll button
+  if (button1.underMouse(data.x, data.y)) {
+
+    if (!moving) {
+      // randomize pigs and move them back
+      rollPigs();
+      pig1.reset();
+      pig2.reset();
+      pig2.x += 100;
+      moving = true;
     }
+  }
 
-    // Pass button
-    if (button2.underMouse(data.x, data.y)) {
+  // Pass button
+  if (button2.underMouse(data.x, data.y)) {
 
-      if (!moving) {
-        // add score to total, change player
-        players[currentPlayer].totalScore += players[currentPlayer].roundScore;
-        players[currentPlayer].roundScore = 0;
-        changePlayer();
-      }
+    if (!moving) {
+      // add score to total, change player
+      players[currentPlayer].totalScore += players[currentPlayer].roundScore;
+      players[currentPlayer].roundScore = 0;
+      changePlayer();
     }
+  }
 
-    // server stuff
 }
 
 function newPlayerNum(num) {
   playerNum = num;
+}
+function newPlayerAdd() {
+  let p = new Player();
+  players.push(p);
 }

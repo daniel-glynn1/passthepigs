@@ -4,7 +4,12 @@ function showText() {
 
   // current player info
   textSize(25);
-  text('Player ' + (currentPlayer + 1) + "'s turn", 580, height - 80);
+  if (playerNum == currentPlayer + 1) {
+    text('Player ' + (currentPlayer + 1) + "'s turn", 580, height - 80);
+  } else {
+    text('Player ' + (currentPlayer + 1) + "'s turn", 590, height - 35);
+  }
+
   textSize(22);
   text('Player ' + (currentPlayer + 1) + ':', 25, height - 85);
   text('Round score: ' + players[currentPlayer].roundScore, 25, height - 50);
@@ -12,7 +17,7 @@ function showText() {
 
   // each players total score
   textSize(18);
-  for (let i = 0; i < numPlayers; i++) {
+  for (let i = 0; i < players.length; i++) {
     text('Player ' + (i + 1), 10 + 120 * i, 100);
     text('Score: ' + players[i].totalScore, 10 + 120 * i, 120);
   }
@@ -52,7 +57,7 @@ function changeScore() {
 
 // cycle through players
 function changePlayer() {
-  if (currentPlayer == numPlayers - 1) {
+  if (currentPlayer == players.length - 1) {
     currentPlayer = 0;
   } else {
     currentPlayer++;

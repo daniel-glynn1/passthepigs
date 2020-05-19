@@ -14,10 +14,12 @@ io.sockets.on('connection', newConnection);
 
 
 let numConnections = 0;
+let players = [];
 
 function newConnection(socket) {
   numConnections++;
   console.log('Connection #' + numConnections + ': ' + socket.id);
+  io.to(socket.id).emit('playerList', players);
 
   socket.on('mouse', mouseMessage);
   function mouseMessage(data) {
@@ -41,6 +43,18 @@ function newConnection(socket) {
     num = numConnections;
     io.to(socket.id).emit('player', num);
   }
+
+  socket.on('join', makeNewPlayer);
+  function makeNewPlayer(num) {
+    io.sockets.emit('join', num);
+  }
+
+  socket.on('add', addPlayer);
+  function addPlayer(p) {
+    players.push(p);
+  }
+
+
 
 
 }
