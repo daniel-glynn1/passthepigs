@@ -20,7 +20,6 @@ function newRandNums(nums) {
 
 }
 
-
 function newMouseClicked(data) {
   // Roll button
   if (button1.underMouse(data.x, data.y)) {
@@ -45,7 +44,6 @@ function newMouseClicked(data) {
       changePlayer();
     }
   }
-
 }
 
 function newPlayerNum(num) {

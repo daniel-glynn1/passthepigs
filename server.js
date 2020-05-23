@@ -1,17 +1,4 @@
 
-/*
-let express = require("express");
-let app = express();
-let port = process.env.PORT || 3000;
-let server = app.listen(port);
-
-app.use(express.static('public'));
-
-console.log("look at this server bro");
-
-let socket = require("socket.io");
-let io = socket(server);
-*/
 let express = require('express');
 let app = express();
 let server = require('http').createServer(app);
@@ -25,16 +12,26 @@ server.listen(port, function () {
 // Routing
 app.use(express.static('public'));
 
-
-
 io.sockets.on('connection', newConnection);
 
 let numConnections = 0;
 let players = [];
 let playerNames = [];
+let ids = [];
+
 
 function newConnection(socket) {
   numConnections++;
+  if (numConnections == 1) {
+    playerNames = [];
+    players = [];
+  }
+  ids.push(socket.id);
+  console.log(ids);
+  console.log('id1: ' + findIndex(socket.id));
+  console.log('id: ' + socket.id);
+
+
   console.log('Connection #' + numConnections + ': ' + socket.id);
   io.to(socket.id).emit('playerList', players);
 
@@ -55,7 +52,7 @@ function newConnection(socket) {
 
   socket.on('player', setPlayerNum);
   function setPlayerNum(num) {
-    num = numConnections;
+    num = findIndex(socket.id) + 1;
     io.to(socket.id).emit('player', num);
   }
 
@@ -74,7 +71,7 @@ function newConnection(socket) {
     playerNames.push(n);
     let namePos = {
       name: n,
-      pos: numConnections - 1
+      pos: findIndex(socket.id)
     }
     socket.broadcast.emit('name', namePos);
   }
@@ -93,4 +90,16 @@ function newConnection(socket) {
     console.log(socket.id + ' disconnected');
   }
 
+}
+
+function findIndex(s) {
+  let ind;
+  for (let i = 0; i < ids.length; i++) {
+    console.log('hi');
+    if (ids[i] == s) {
+      ind = i;
+      console.log('hey');
+    }
+  }
+  return ind;
 }

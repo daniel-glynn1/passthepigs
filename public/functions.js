@@ -8,6 +8,9 @@ function createObjects() {
   pig1 = new Pig(600, 100, 1);
   pig2 = new Pig(700, 100, 2);
 
+  let p = new Player();
+  players.push(p);
+
   userInput = createInput('');
   userInput.position(-300, 0);
 }
@@ -56,11 +59,14 @@ function gameScreen() {
   text(players[currentPlayer].name + ':', 25, 515);
   textSize(22);
   text('Round score: ' + players[currentPlayer].roundScore, 25, 550);
-  text('Total score: ' + players[currentPlayer].totalScore, 25, 575);
+  text('Total score: ' + players[currentPlayer].totalScore + '(' + (players[currentPlayer].totalScore +
+    players[currentPlayer].roundScore) + ')', 25, 575);
 
   // each players total score
   textSize(18);
-  for (let i = 0; i < players.length; i++) {
+  let length = players.length;
+  if (!nameEntered) length--;
+  for (let i = 0; i < length; i++) {
     fill(84, 153, 199, 70);
     rect(4 + 140 * i, 78, 105, 54, 4);
     fill(0);
