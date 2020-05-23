@@ -44,6 +44,7 @@ function setup() {
   socket = io.connect('http://localhost:3000/');
   // socket = io.connect('https://daniel-glynn1-passthepigs.glitch.me/');
 
+
   serverListening();
 
   // send new player to server

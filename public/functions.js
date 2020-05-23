@@ -46,7 +46,9 @@ function gameScreen() {
   if (playerNum == currentPlayer + 1) {
     text('Your turn', 678, 520);
   } else {
-    text(players[currentPlayer].name + "'s turn", 590, 565);
+    textAlign(RIGHT);
+    text(players[currentPlayer].name + "'s turn", 770, 565);
+    textAlign(LEFT);
   }
 
   // current player score, bottom left

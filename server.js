@@ -71,8 +71,6 @@ function newConnection(socket) {
   }
 
 
-
-
   // disconnection
   socket.on('disconnect', disconnection);
   function disconnection() {
