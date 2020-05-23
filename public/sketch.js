@@ -105,7 +105,7 @@ function mouseClicked() {
         for (i = 0; i < playerNum - 1; i++) {
           let p = new Player();
           players.push(p);
-          socket.emit('getNames', 1);finpl
+          socket.emit('getNames', 1);
         }
       }
     }
