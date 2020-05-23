@@ -41,7 +41,8 @@ function setup() {
   mode = 0;
 
   // create socket
-  socket = io.connect('http://localhost:3000/');
+  socket = io();
+  // socket = io.connect('http://localhost:3000');
   // socket = io.connect('https://daniel-glynn1-passthepigs.glitch.me/');
 
 

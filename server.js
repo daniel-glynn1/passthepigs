@@ -1,19 +1,33 @@
 
-const express = require("express");
-const app = express();
-const port = process.env.PORT || 3000;
-const server = app.listen(port);
+/*
+let express = require("express");
+let app = express();
+let port = process.env.PORT || 3000;
+let server = app.listen(port);
 
 app.use(express.static('public'));
 
 console.log("look at this server bro");
 
-const socket = require("socket.io");
-const io = socket(server);
+let socket = require("socket.io");
+let io = socket(server);
+*/
+let express = require('express');
+let app = express();
+let server = require('http').createServer(app);
+let io = require('socket.io')(server);
+let port = process.env.PORT || 3000;
+
+server.listen(port, function () {
+  console.log('Server listening at port %d', port);
+});
+
+// Routing
+app.use(express.static('public'));
+
+
 
 io.sockets.on('connection', newConnection);
-
-
 
 let numConnections = 0;
 let players = [];
