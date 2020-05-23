@@ -1,21 +1,23 @@
 
-let express = require("express");
-let app = express();
-let port = process.env.PORT || 3000;
-let server = app.listen(port);
+const express = require("express");
+const app = express();
+const port = process.env.PORT || 3000;
+const server = app.listen(port);
 
 app.use(express.static('public'));
 
 console.log("look at this server bro");
 
-let socket = require("socket.io");
-let io = socket(server);
+const socket = require("socket.io");
+const io = socket(server);
 
 io.sockets.on('connection', newConnection);
 
 
+
 let numConnections = 0;
 let players = [];
+let playerNames = [];
 
 function newConnection(socket) {
   numConnections++;
@@ -26,7 +28,6 @@ function newConnection(socket) {
   function mouseMessage(data) {
     socket.broadcast.emit('mouse', data);
     // io.sockets.emit('mouse', data);
-    console.log(data);
 
   }
 
@@ -36,7 +37,6 @@ function newConnection(socket) {
       nums[i] = Math.random(1000);
     }
     io.sockets.emit('rand', nums);
-    console.log(nums);
   }
 
   socket.on('player', setPlayerNum);
@@ -55,7 +55,30 @@ function newConnection(socket) {
     players.push(p);
   }
 
+  socket.on('name', addName);
+  function addName(n) {
+    playerNames.push(n);
+    let namePos = {
+      name: n,
+      pos: numConnections - 1
+    }
+    socket.broadcast.emit('name', namePos);
+  }
+  socket.on('getNames', sendNames);
+  function sendNames(names) {
+    names = playerNames;
+    io.to(socket.id).emit('getNames', names);
+  }
 
 
+
+
+  // disconnection
+  socket.on('disconnect', disconnection);
+  function disconnection() {
+    numConnections--;
+    io.sockets.emit('leave', numConnections);
+    console.log(socket.id + ' disconnected');
+  }
 
 }

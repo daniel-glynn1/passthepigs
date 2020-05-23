@@ -8,6 +8,7 @@ class Button {
 
     this.b = 255;
 
+
     this.tx = tx;
   }
 
@@ -22,7 +23,7 @@ class Button {
 
   show() {
     // rectangle
-    fill(0, 0, this.b);
+    fill(1, 20, this.b);
     noStroke();
     rect(this.x, this.y, this.w, this.h, 5);
 
