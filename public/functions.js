@@ -8,9 +8,6 @@ function createObjects() {
   pig1 = new Pig(600, 100, 1);
   pig2 = new Pig(700, 100, 2);
 
-  let p = new Player();
-  players.push(p);
-
   userInput = createInput('');
   userInput.position(-300, 0);
 }
@@ -42,9 +39,11 @@ function startMenu() {
 function gameScreen() {
   // UI elements
   image(table, 0, 0, 800, 600);
-  fill(0);
+  if (darkMode) fill(255);
+  else fill(0);
+  textAlign(LEFT);
 
-  // whose turn it is
+  // whose turn it is, bottom right
   textSize(25);
   if (playerNum == currentPlayer + 1) {
     text('Your turn', 678, 520);
@@ -59,35 +58,49 @@ function gameScreen() {
   text(players[currentPlayer].name + ':', 25, 515);
   textSize(22);
   text('Round score: ' + players[currentPlayer].roundScore, 25, 550);
-  text('Total score: ' + players[currentPlayer].totalScore + '(' + (players[currentPlayer].totalScore +
-    players[currentPlayer].roundScore) + ')', 25, 575);
+  if (players[currentPlayer].roundScore == 0) {
+    text('Total score: ' + players[currentPlayer].totalScore, 25, 575);
+  } else {
+    text('Total score: ' + players[currentPlayer].totalScore + ' (' +
+      (players[currentPlayer].totalScore + players[currentPlayer].roundScore) +')', 25, 575);
+  }
 
-  // each players total score
-  textSize(18);
+
+  // each players total score, above table
+  textSize(17);
+  textAlign(LEFT);
   let length = players.length;
-  if (!nameEntered) length--;
   for (let i = 0; i < length; i++) {
     fill(84, 153, 199, 70);
-    rect(4 + 140 * i, 78, 105, 54, 4);
-    fill(0);
+    rect(4 + 140 * i, 78, 115, 54, 4);
+    if (darkMode) fill(255);
+    else fill(0);
     text(players[i].name, 10 + 140 * i, 98);
     text('Score: ' + players[i].totalScore, 10 + 140 * i, 122);
   }
 
-  // title with image
+  // title with image, top
   textSize(30);
+  textAlign(LEFT);
   text('Pass the Pigs', 300, 30);
   image(pigs[3], 460, -35, 150, 150);
   image(pigs[3], 425, -45, 150, 150);
 
-  // top right name
+  // name, top right
   textSize(23);
   textAlign(RIGHT);
   text(players[playerNum - 1].name, 780, 30);
   textAlign(LEFT);
 
-  // text box for user input
+  // if it's last turn
+  if (lastTurn >= 1) {
+    textSize(22);
+    textAlign(CENTER);
+    text('Last turn!', 400, 570);
+    textAlign(LEFT);
+  }
 
+  // text box for user input
   if (!nameEntered) {
     // input box
     fill(0);
@@ -120,33 +133,13 @@ function endScreen() {
   fill(0);
   textSize(45);
   textAlign(CENTER);
-  text('Player ' + (winner + 1) + ' wins!', 400, 300);
+  text(players[winner].name + ' wins!', 400, 300);
   textAlign(LEFT);
 
   button4.show();
 }
 
-function rollPigs() {
-  pig1.roll();
-  pig2.roll();
-  firstRoll = true;
-}
-function showPigs() {
-  pig1.show();
-  pig2.show();
-}
-function movePigs() {
-  pig1.move();
-  pig2.move();
-}
-function resetPigs() {
-  rollPigs();
-  pig1.reset();
-  pig2.reset();
-  pig2.x += 100;
-  moving = true;
-}
-
+// print pig landing name
 function pigLanding() {
   textAlign(CENTER);
   textSize(30);
@@ -176,8 +169,55 @@ function changePlayer() {
   } else {
     currentPlayer++;
   }
+  if (lastTurn >= 1) {
+    if (lastTurn == players.length - 1) {
+      winner = 0;
+      for (let i = 1; i < players.length; i++) {
+        if (players[i].totalScore > players[winner].totalScore) {
+          winner = i;
+        }
+      }
+      mode = 2;
+      music.stop();
+    } else {
+      lastTurn++;
+    }
+
+  }
 }
 
+function checkWin() {
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].totalScore >= targetScore) {
+      if (lastTurn == 0) {
+        lastTurn = 1;
+      }
+    }
+  }
+}
+
+function rollPigs() {
+  pig1.roll();
+  pig2.roll();
+  firstRoll = true;
+}
+function showPigs() {
+  pig1.show();
+  pig2.show();
+}
+function movePigs() {
+  pig1.move();
+  pig2.move();
+}
+function resetPigs() {
+  rollPigs();
+  pig1.reset();
+  pig2.reset();
+  pig2.x += 100;
+  moving = true;
+}
+
+// dim button when mouse is over
 function dimButton(b) {
   if (b.underMouse(mouseX, mouseY)) {
     b.changeBlue(200);

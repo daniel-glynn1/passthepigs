@@ -9,6 +9,5 @@ class Player {
   reset() {
     this.roundScore = 0;
     this.totalScore = 0;
-    this.name = '';
   }
 }

@@ -41,6 +41,10 @@ function newMouseClicked(data) {
       // add score to total, change player
       players[currentPlayer].totalScore += players[currentPlayer].roundScore;
       players[currentPlayer].roundScore = 0;
+
+      pig1.x = 1000;
+      pig2.x = 1000
+      output = "";
       changePlayer();
     }
   }

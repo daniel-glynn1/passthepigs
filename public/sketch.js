@@ -1,57 +1,39 @@
 
-// server stuff
-let socket;
-
-// constants
-let width = 800;
-let height = 600;
-
-// objects
-let button1, button2, button3, button4;
-let pigs = [];
-let players = [];
-
-// global variables
-let currentPlayer = 0, playerNum = 0;
-let output = "";
-let firstRoll = false, moving = false, nameEntered = false;
-let mode;
-let winner;
-let userInput;
-
-// images
+// load images
 function preload() {
   for (let i = 0; i < 6; i++) {
-    pigs[i] = loadImage('pigs/pig' + i + '.png');
+    pigs[i] = loadImage('assets/pig' + i + '.png');
   }
-  table = loadImage('table.png');
+  table = loadImage('assets/table.png');
+  font = loadFont('assets/Georgia.ttf');
+  music = loadSound('assets/song.mp3');
 }
 
 function setup() {
   canvas = createCanvas(width,height);
   canvas.position(200, 100);
 
-  // creating objects
   createObjects();
 
-  // set font
-  textFont('Georgia');
+  textFont(font);
+  music.setLoop(true);
+  music.setVolume(0.1);
 
-  // set game mode
+  // game mode
   mode = 0;
 
-  // create socket
+  // create socket/connection to server
   socket = io();
-
   serverListening();
 
   // send new player to server
   socket.emit('player', 1);
+  socket.emit('join', 1);
 }
 
 function draw() {
-  background(209, 242, 235);
-  fill(255);
+  if (darkMode) background(23, 32, 42);
+  else background(209, 242, 235);
 
   if (mode == 0) {
     startMenu();
@@ -62,7 +44,7 @@ function draw() {
       button2.show();
     }
 
-    // UI elements
+    // UI
     gameScreen();
 
     // if first pigs have been rolled
@@ -80,26 +62,19 @@ function draw() {
       }
 
       // check if anyone has won
-      for (let i = 0; i < players.length; i++) {
-        if (players[i].totalScore >= 100) {
-          mode = 2;
-          winner = i;
-        }
-      }
+      checkWin();
     }
   } else if (mode == 2) {
-    // end game screen
     endScreen();
   }
 }
 
-// Controls roll/pass, buttons don't work if pigs are moving
 function mouseClicked() {
   if (mode == 0) {
     // Start game button
     if (button3.underMouse(mouseX, mouseY)) {
       mode = 1;
-      socket.emit('join', 1);
+      music.play();
       if (playerNum != 1) {
         for (i = 0; i < playerNum - 1; i++) {
           let p = new Player();
@@ -107,6 +82,7 @@ function mouseClicked() {
           socket.emit('getNames', 1);
         }
       }
+
     }
   } else if (mode == 1 && playerNum == currentPlayer + 1) {
     // Roll button
@@ -126,6 +102,10 @@ function mouseClicked() {
         // add score to total, change player
         players[currentPlayer].totalScore += players[currentPlayer].roundScore;
         players[currentPlayer].roundScore = 0;
+
+        pig1.x = 1000;
+        pig2.x = 1000
+        output = "";
         changePlayer();
       }
     }
@@ -137,15 +117,16 @@ function mouseClicked() {
     }
     socket.emit('mouse', data);
 
-
   } else if (mode == 2) {
     // New Game button
     if (button4.underMouse(mouseX, mouseY)) {
       mode = 1;
+      firstRoll = false;
+      currentPlayer = 0;
+      lastTurn = 0;
+      music.play();
       for (let i = 0; i < players.length; i++) {
         players[i].reset();
-        firstRoll = false;
-        currentPlayer = 0;
       }
     }
   }
@@ -171,8 +152,25 @@ function keyPressed() {
   if (keyCode == ENTER) {
     if (!nameEntered) {
       players[playerNum - 1].name = userInput.value();
+      if (players[playerNum - 1].name.length >= 11) {
+        players[playerNum - 1].name = players[playerNum - 1].name.substring(0, 11);
+      }
+      socket.emit('name', players[playerNum - 1].name);
       nameEntered = true;
-      socket.emit('name', userInput.value());
+    }
+  }
+  if (nameEntered && keyCode == 68) {
+    if (!darkMode) {
+      darkMode = true;
+    } else {
+      darkMode = false;
+    }
+  }
+  if (nameEntered && keyCode == 80) {
+    if (music.isPlaying()) {
+      music.pause();
+    } else {
+      music.play();
     }
   }
 }

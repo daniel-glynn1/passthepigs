@@ -8,7 +8,6 @@ class Button {
 
     this.b = 255;
 
-
     this.tx = tx;
   }
 

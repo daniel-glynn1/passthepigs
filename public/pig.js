@@ -20,7 +20,6 @@ class Pig {
   roll() {
     this.num = this.nums[this.bounce] * 1000;
 
-    console.log(this.num);
     if (this.num < 7) {
       this.img = pigs[5];
       this.land = 5;

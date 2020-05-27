@@ -19,18 +19,14 @@ let players = [];
 let playerNames = [];
 let ids = [];
 
-
 function newConnection(socket) {
   numConnections++;
   if (numConnections == 1) {
     playerNames = [];
     players = [];
+    ids = [];
   }
   ids.push(socket.id);
-  console.log(ids);
-  console.log('id1: ' + findIndex(socket.id));
-  console.log('id: ' + socket.id);
-
 
   console.log('Connection #' + numConnections + ': ' + socket.id);
   io.to(socket.id).emit('playerList', players);
@@ -38,8 +34,6 @@ function newConnection(socket) {
   socket.on('mouse', mouseMessage);
   function mouseMessage(data) {
     socket.broadcast.emit('mouse', data);
-    // io.sockets.emit('mouse', data);
-
   }
 
   socket.on('rand', genRand);
@@ -75,6 +69,7 @@ function newConnection(socket) {
     }
     socket.broadcast.emit('name', namePos);
   }
+
   socket.on('getNames', sendNames);
   function sendNames(names) {
     names = playerNames;
@@ -86,6 +81,7 @@ function newConnection(socket) {
   socket.on('disconnect', disconnection);
   function disconnection() {
     numConnections--;
+    ids.splice(findIndex(socket.id), 1);
     io.sockets.emit('leave', numConnections);
     console.log(socket.id + ' disconnected');
   }
@@ -95,10 +91,8 @@ function newConnection(socket) {
 function findIndex(s) {
   let ind;
   for (let i = 0; i < ids.length; i++) {
-    console.log('hi');
     if (ids[i] == s) {
       ind = i;
-      console.log('hey');
     }
   }
   return ind;
