@@ -20,7 +20,7 @@ class Pig {
   roll() {
     this.num = this.nums[this.bounce] * 1000;
 
-    if (this.num < 7) {
+    if (this.num < 4) {
       this.img = pigs[5];
       this.land = 5;
     } else if (this.num < 7 + 30) {
@@ -51,7 +51,7 @@ class Pig {
     this.x += this.vx;
     this.vy -= this.ay;
 
-    if (this.y > 150) {
+    if (this.y > 160) {
       this.vy *= -0.65;
       if (this.vy < 5) {
         this.vy = 0;
@@ -70,7 +70,7 @@ class Pig {
   // move pigs back
   reset() {
     this.x = 600;
-    this.y = 100;
+    this.y = 110;
     this.vy = 10;
     this.ay = 0.6;
     this.vx = -5;

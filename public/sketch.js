@@ -17,7 +17,7 @@ function setup() {
 
   textFont(font);
   music.setLoop(true);
-  music.setVolume(0.1);
+  music.setVolume(0.05);
 
   // game mode
   mode = 0;
@@ -74,7 +74,6 @@ function mouseClicked() {
     // Start game button
     if (button3.underMouse(mouseX, mouseY)) {
       mode = 1;
-      music.play();
       if (playerNum != 1) {
         for (i = 0; i < playerNum - 1; i++) {
           let p = new Player();
@@ -152,8 +151,8 @@ function keyPressed() {
   if (keyCode == ENTER) {
     if (!nameEntered) {
       players[playerNum - 1].name = userInput.value();
-      if (players[playerNum - 1].name.length >= 11) {
-        players[playerNum - 1].name = players[playerNum - 1].name.substring(0, 11);
+      if (players[playerNum - 1].name.length >= 20) {
+        players[playerNum - 1].name = players[playerNum - 1].name.substring(0, 20);
       }
       socket.emit('name', players[playerNum - 1].name);
       nameEntered = true;
@@ -172,5 +171,12 @@ function keyPressed() {
     } else {
       music.play();
     }
+  }
+  if (nameEntered && (keyCode >= 49 && keyCode <= 52) && !players[playerNum - 1].showQuickChat) {
+    let data = {
+      k: keyCode,
+      p: playerNum
+    }
+    socket.emit('newChat', data);
   }
 }

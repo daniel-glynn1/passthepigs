@@ -76,13 +76,18 @@ function newConnection(socket) {
     io.to(socket.id).emit('getNames', names);
   }
 
+  socket.on('newChat', sendChat);
+  function sendChat(data) {
+    io.sockets.emit('newChat', data);
+  }
+
 
   // disconnection
   socket.on('disconnect', disconnection);
   function disconnection() {
     numConnections--;
     ids.splice(findIndex(socket.id), 1);
-    io.sockets.emit('leave', numConnections);
+    socket.broadcast.emit('leave', numConnections);
     console.log(socket.id + ' disconnected');
   }
 

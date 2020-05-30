@@ -7,6 +7,7 @@ function serverListening() {
   socket.on('leave', deletePlayer);
   socket.on('name', newPlayerName);
   socket.on('getNames', fillNames);
+  socket.on('newChat', newQuickChat);
 }
 
 
@@ -70,4 +71,10 @@ function fillNames(names) {
   for (let i = 0; i < playerNum - 1; i++) {
     players[i].name = names[i];
   }
+}
+
+function newQuickChat(data) {
+  players[data.p - 1].showQuickChat = true;
+  players[data.p - 1].quickChatTime = millis();
+  players[data.p - 1].keyInput = data.k - 48;
 }

@@ -4,7 +4,7 @@ let socket;
 // constants
 let width = 800;
 let height = 600;
-let targetScore = 10;
+let targetScore = 100;
 
 // objects
 let button1, button2, button3, button4;
@@ -20,3 +20,4 @@ let winner;
 let userInput;
 let lastTurn = 0;
 let darkMode = false;
+let quickChatTime;

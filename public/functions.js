@@ -37,8 +37,9 @@ function startMenu() {
 
 // text shown on screen
 function gameScreen() {
-  // UI elements
-  image(table, 0, 0, 800, 600);
+  // table
+  image(table, 0, 20, 800, 600);
+
   if (darkMode) fill(255);
   else fill(0);
   textAlign(LEFT);
@@ -69,27 +70,46 @@ function gameScreen() {
   // each players total score, above table
   textSize(17);
   textAlign(LEFT);
-  let length = players.length;
-  for (let i = 0; i < length; i++) {
+
+  let h, x;
+  for (let i = 0; i < players.length; i++) {
+    if (i < 4) {
+      h = 38;
+      x = i;
+    } else {
+      h = 100;
+      x = i - 4;
+    }
     fill(84, 153, 199, 70);
-    rect(4 + 140 * i, 78, 115, 54, 4);
+    rect(15 + 195 * x, h, 185, 54, 4);
     if (darkMode) fill(255);
     else fill(0);
-    text(players[i].name, 10 + 140 * i, 98);
-    text('Score: ' + players[i].totalScore, 10 + 140 * i, 122);
+    text(players[i].name, 21 + 195 * x, h + 20);
+    text('Score: ' + players[i].totalScore, 21 + 195 * x, h + 44);
+
   }
+  // quick chat
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].showQuickChat) {
+      quickChat(players[i].keyInput, i + 1);
+    }
+  }
+
+  if (darkMode) fill(255);
+  else fill(0);
+
 
   // title with image, top
   textSize(30);
   textAlign(LEFT);
-  text('Pass the Pigs', 300, 30);
-  image(pigs[3], 460, -35, 150, 150);
-  image(pigs[3], 425, -45, 150, 150);
+  text('Pass the Pigs', 280, 30);
+  image(pigs[3], 436, -40, 150, 150);
+  image(pigs[3], 401, -47, 150, 150);
 
   // name, top right
   textSize(23);
   textAlign(RIGHT);
-  text(players[playerNum - 1].name, 780, 30);
+  text(players[playerNum - 1].name, 785, 25);
   textAlign(LEFT);
 
   // if it's last turn
@@ -143,7 +163,7 @@ function endScreen() {
 function pigLanding() {
   textAlign(CENTER);
   textSize(30);
-  text(output, 400, 450);
+  text(output, 400, 470);
   textAlign(LEFT);
 }
 
@@ -225,6 +245,41 @@ function dimButton(b) {
     b.changeBlue(255);
   }
 }
+
+function quickChat(key, num) {
+  let t, w;
+  if (key == 1) {
+    t = "Wow!";
+    w = 65;
+  } else if (key == 2) {
+    t = "What a roll!";
+    w = 110;
+  } else if (key == 3) {
+    t = "Next time bud";
+    w = 128;
+  } else if (key == 4) {
+    t = "Shit.";
+    w = 55;
+  }
+  let x, y;
+  if (num <= 4) {
+    x = 100 + 195 * (num - 1);
+    y = 65;
+  } else {
+    x = 100 + 195 * (num - 5);
+    y = 127;
+  }
+  fill(255);
+  rect(x - 10, y + 5, w, 30, 15);
+  triangle(x, y - 10, x - 3, y + 10, x + 20, y + 10);
+  fill(0);
+  text(t, x, y + 25);
+
+  if ((millis() - players[num - 1].quickChatTime) > 2000) {
+    players[num - 1].showQuickChat = false;
+  }
+}
+
 
 // calculate roll score based on each pigs landing
 function calcScore(p1, p2) {
