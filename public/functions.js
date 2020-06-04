@@ -2,8 +2,11 @@
 function createObjects() {
   button1 = new Button(690, 545, 100, 43, 'Roll');
   button2 = new Button(580, 545, 100, 43, 'Pass');
-  button3 = new Button(340, 380, 125, 43, "Join Game");
-  button4 = new Button(338, 340, 130, 43, "New Game");
+  button3 = new Button(337, 380, 130, 43, 'Start Game');
+  button4 = new Button(338, 340, 130, 43, 'New Game');
+  button5 = new Button(630, 240, 135, 43, 'Join Lobby');
+  button6 = new Button(5, 5, 25, 25, '');
+  button7 = new Button(10, 40, 170, 43, 'Leave Game');
 
   pig1 = new Pig(600, 100, 1);
   pig2 = new Pig(700, 100, 2);
@@ -31,16 +34,100 @@ function startMenu() {
   image(pigs[3], 305, 210, 150, 150);
   image(pigs[1], 350, 215, 150, 150);
 
-  // join game button
+  // start game button
   button3.show();
+}
+
+function lobbyMenu() {
+
+  // title with image, top
+  fill(255);
+  textSize(30);
+  textAlign(LEFT);
+  text('Pass the Pigs', 280, 30);
+  image(pigs[3], 436, -40, 150, 150);
+  image(pigs[3], 401, -47, 150, 150);
+
+  // name, top right
+  textSize(23);
+  textAlign(RIGHT);
+  text(tempName, 785, 25);
+  textAlign(LEFT);
+
+  // text box for user input
+  fill(84, 153, 199, 70);
+  rect(20, 50, 760, 80, 10);
+  userInput.position(380, 155);
+  userInput.size(250, 25);
+  userInput.style('font-size', '18px');
+  fill(255);
+  textSize(25);
+  text('Enter name:', 30, 80);
+  textSize(15);
+  text('(Press enter to save)', 445, 77);
+
+  // Current lobby
+  fill(84, 153, 199, 70);
+  rect(20, 150, 760, 150, 10);
+  textSize(25);
+  fill(255);
+  text('Current lobby:', 30, 180);
+
+  if (allNames.length == 1) {
+    text(allNames.length + ' player', 660, 180);
+  } else {
+    text(allNames.length + ' players', 660, 180);
+  }
+
+  textSize(18);
+  let x, y;
+  for (let i = 0; i < allNames.length; i++) {
+    if (i < 4) {
+      x = 50;
+      y = 210 + 20 * i;
+    } else {
+      x = 280;
+      y = 210 + 20 * (i - 4);
+    }
+    text(allNames[i], x, y);
+  }
+
+  // Rules
+  fill(84, 153, 199, 70);
+  rect(20, 320, 760, 260, 10);
+  fill(255);
+  textSize(25);
+  text('Rules:', 30, 350);
+  textSize(20);
+  text("lmao you don't know the rules?", 50, 390);
+
+  if (connectWait) {
+    fill(0);
+    rect(330,275,140,50,5);
+    fill(23, 32, 42);
+    rect(335,280,130,40,5);
+    fill(255);
+    textSize(18);
+    text('Connecting...', 345, 305);
+  } else {
+    // join button
+    if (allNames.length >= 8) {
+      textSize(20);
+      text('Lobby is full', 650, 280);
+    } else {
+      button5.show();
+    }
+  }
+
 }
 
 // text shown on screen
 function gameScreen() {
   // table
   image(table, 0, 20, 800, 600);
+  userInput.position(-300,0);
 
-  if (darkMode) fill(255);
+  if (isDarkMode) fill(255);
   else fill(0);
   textAlign(LEFT);
 
@@ -82,7 +169,7 @@ function gameScreen() {
     }
     fill(84, 153, 199, 70);
     rect(15 + 195 * x, h, 185, 54, 4);
-    if (darkMode) fill(255);
+    if (isDarkMode) fill(255);
     else fill(0);
     text(players[i].name, 21 + 195 * x, h + 20);
     text('Score: ' + players[i].totalScore, 21 + 195 * x, h + 44);
@@ -95,7 +182,7 @@ function gameScreen() {
     }
   }
 
-  if (darkMode) fill(255);
+  if (isDarkMode) fill(255);
   else fill(0);
 
 
@@ -120,25 +207,25 @@ function gameScreen() {
     textAlign(LEFT);
   }
 
-  // text box for user input
-  if (!nameEntered) {
-    // input box
-    fill(0);
-    rect(275, 200, 250, 120, 4);
-    fill(72, 201, 176);
-    rect(280, 205, 240, 110, 4);
-    userInput.position(497,372);
-    userInput.size(200, 25);
-    userInput.style('font-size', '18px');
+  // side menu
+  button6.show();
+  if (isMenuOpen) {
+    if (isDarkMode) fill(0);
+    else fill(255);
+    rect(5, 35, 180, 290, 10);
 
-    fill(0);
-    textAlign(CENTER);
-    text('Enter your name', 400, 240);
-    textSize(15);
-    text('(Press enter to save)', 400, 260);
-    textAlign(LEFT);
-  } else {
-    userInput.position(-300, 0);
+    button7.show();
+
+    textSize(18);
+    if (isDarkMode) fill(255);
+    else fill(0);
+    text('D: toggle dark mode', 15, 130);
+    text('P: play/pause music', 15, 155);
+    text('Quick Chat:', 15, 200);
+    text('1 - Wow!', 15, 225);
+    text('2 - What a roll!', 15, 250);
+    text('3 - Next time bud', 15, 275);
+    text('4 - Shit.', 15, 300);
   }
 
 }
@@ -146,12 +233,12 @@ function gameScreen() {
 function endScreen() {
   // border
   fill(0);
-  rect(190, 140, 420, 320);
+  rect(140, 140, 520, 320);
   fill(170, 210, 200);
-  rect(200, 150, 400, 300);
+  rect(150, 150, 500, 300);
 
   fill(0);
-  textSize(45);
+  textSize(40);
   textAlign(CENTER);
   text(players[winner].name + ' wins!', 400, 300);
   textAlign(LEFT);
@@ -161,6 +248,8 @@ function endScreen() {
 
 // print pig landing name
 function pigLanding() {
+  if (isDarkMode) fill(255);
+  else fill(0);
   textAlign(CENTER);
   textSize(30);
   text(output, 400, 470);
@@ -197,13 +286,35 @@ function changePlayer() {
           winner = i;
         }
       }
-      mode = 2;
+      mode = 3;
+      socket.emit('changeMode', mode);
       music.stop();
     } else {
       lastTurn++;
     }
 
   }
+}
+
+function joinLobby() {
+  if (millis() - connectTime > 500) {
+    if (playerNum != 1) {
+      for (i = 0; i < playerNum - 1; i++) {
+        let p = new Player();
+        players.push(p);
+        socket.emit('getNames', 1);
+      }
+    }
+    if (tempName == '') {
+      tempName = random(randomNames) + ' Mc' + random(randomNames);
+    }
+
+    socket.emit('join', tempName);
+    mode = 2;
+    socket.emit('changeMode', mode);
+    connectWait = false;
+  }
+
 }
 
 function checkWin() {
@@ -219,7 +330,7 @@ function checkWin() {
 function rollPigs() {
   pig1.roll();
   pig2.roll();
-  firstRoll = true;
+  isFirstRoll = true;
 }
 function showPigs() {
   pig1.show();
@@ -234,7 +345,7 @@ function resetPigs() {
   pig1.reset();
   pig2.reset();
   pig2.x += 100;
-  moving = true;
+  isMoving = true;
 }
 
 // dim button when mouse is over

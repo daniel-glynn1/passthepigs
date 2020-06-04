@@ -23,7 +23,7 @@ class Pig {
     if (this.num < 4) {
       this.img = pigs[5];
       this.land = 5;
-    } else if (this.num < 7 + 30) {
+    } else if (this.num < 2 + 30) {
       this.img = pigs[4];
       this.land = 4;
     } else if (this.num < 7 + 30 + 88) {
@@ -57,7 +57,7 @@ class Pig {
         this.vy = 0;
         this.vx = 0;
         this.bounce = 0;
-        moving = false;
+        isMoving = false;
         this.stopped = true;
       } else {
         this.vx += 0.7;

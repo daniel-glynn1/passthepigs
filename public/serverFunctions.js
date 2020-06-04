@@ -2,10 +2,10 @@
 function serverListening() {
   socket.on('mouse', newMouseClicked);
   socket.on('rand', newRandNums);
-  socket.on('player', newPlayerNum);
+  socket.on('checkLobby', newLobbyNames);
   socket.on('join', newPlayerAdd);
+  socket.on('player', newPlayerNum)
   socket.on('leave', deletePlayer);
-  socket.on('name', newPlayerName);
   socket.on('getNames', fillNames);
   socket.on('newChat', newQuickChat);
 }
@@ -25,20 +25,20 @@ function newMouseClicked(data) {
   // Roll button
   if (button1.underMouse(data.x, data.y)) {
 
-    if (!moving) {
+    if (!isMoving) {
       // randomize pigs and move them back
       rollPigs();
       pig1.reset();
       pig2.reset();
       pig2.x += 100;
-      moving = true;
+      isMoving = true;
     }
   }
 
   // Pass button
   if (button2.underMouse(data.x, data.y)) {
 
-    if (!moving) {
+    if (!isMoving) {
       // add score to total, change player
       players[currentPlayer].totalScore += players[currentPlayer].roundScore;
       players[currentPlayer].roundScore = 0;
@@ -51,21 +51,34 @@ function newMouseClicked(data) {
   }
 }
 
+function newLobbyNames(names) {
+  allNames = names;
+}
+
+function newPlayerAdd(name) {
+  if (mode == 2) {
+    let p = new Player();
+    players.push(p);
+    players[players.length - 1].name = name;
+  } else if (mode == 1) {
+    allNames.push(name);
+  }
+
+}
 function newPlayerNum(num) {
   playerNum = num;
 }
-function newPlayerAdd() {
-  let p = new Player();
-  players.push(p);
-}
 function deletePlayer(num) {
-  players.splice(num - 1, 1);
-  if (playerNum > num) {
-    playerNum--;
+  if (mode == 2) {
+    players.splice(num, 1);
+    if (playerNum > num) {
+      playerNum--;
+    }
+    currentPlayer = 0;
   }
-}
-function newPlayerName(x) {
-  players[x.pos].name = x.name;
+
+  allNames.splice(num, 1);
+
 }
 function fillNames(names) {
   for (let i = 0; i < playerNum - 1; i++) {
