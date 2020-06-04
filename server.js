@@ -68,7 +68,7 @@ function newConnection(socket) {
   socket.on('join', makeNewPlayer);
   function makeNewPlayer(name) {
     playerNames.push(name);
-    io.sockets.emit('join', name);
+    socket.broadcast.emit('join', name);
 
   }
 

@@ -309,9 +309,13 @@ function joinLobby() {
       tempName = random(randomNames) + ' Mc' + random(randomNames);
     }
 
-    socket.emit('join', tempName);
+    let p = new Player();
+    players.push(p);
+    players[players.length - 1].name = tempName;
     mode = 2;
     socket.emit('changeMode', mode);
+    socket.emit('join', tempName);
+
     connectWait = false;
   }
 

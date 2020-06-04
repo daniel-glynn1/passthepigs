@@ -23,3 +23,8 @@ let isDarkMode = false, isMenuOpen = false;
 let allNames = [], randomNames = [];
 let tempName = "";
 let connectTime = 0, connectWait = false;
+
+
+// console.log('playernum: ' + playerNum);
+// console.log('numplayers: ' + players.length);
+// console.log('currentPlayer: ' + currentPlayer);
