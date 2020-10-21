@@ -1,3 +1,2 @@
 # passthepigs
-pass the pigs game using p5.js and node.js, including express and socket.io
-we passin lads
+Online multiplayer pass the pigs game built in javascript, using p5.js and node.js, including express and socket.io frameworks.
